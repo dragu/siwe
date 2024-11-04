@@ -1,0 +1,18 @@
+{
+    "name": "zbkm/siwe",
+    "description": "A PHP implementation of EIP-4361 Sign In With Ethereum verification",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Zbkm\\Siwe\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "zbkm",
+            "email": "zubokome@gmail.com"
+        }
+    ],
+    "require": {}
+}
