@@ -1,15 +1,15 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use Zbkm\Siwe\Siwe;
+use Zbkm\Siwe\NonceManager;
 
-class NonceTest extends TestCase
+class NonceManagerTest extends TestCase
 {
     public function testGenerateNonce(): void
     {
-        $nonce = Siwe::generateNonce();
+        $nonce = NonceManager::generate();
         $this->assertSame(32, strlen($nonce));
 
-        $nonce2 = Siwe::generateNonce();
+        $nonce2 = NonceManager::generate();
         $this->assertNotSame($nonce, $nonce2);
     }
 }
