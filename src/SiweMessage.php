@@ -11,7 +11,7 @@ class SiweMessage
      * @param SiweMessageParams $params
      * @return string
      */
-    static public function create(SiweMessageParams $params): string
+    public static function create(SiweMessageParams $params): string
     {
         $domain = $params->scheme ? "$params->scheme://$params->domain" : $params->domain;
 
@@ -49,11 +49,48 @@ class SiweMessage
         return $message;
     }
 
-    static private function formatTimestampToISO(int $timestamp): string
+    public static function parse(string $message): SiweMessageParams
+    {
+        // regex from https://github.com/wevm/viem/blob/main/src/utils/siwe/parseSiweMessage.ts
+        $re = "/^(?:(?P<scheme>[a-zA-Z][a-zA-Z0-9+-.]*):\/\/)?(?P<domain>[a-zA-Z0-9+-.]*(?::[0-9]{1,5})?) (?:wants you to sign in with your Ethereum account:\n)(?P<address>0x[a-fA-F0-9]{40})\n\n(?:(?P<statement>.*)\n\n)?(?:URI: (?P<uri>.+))\n(?:Version: (?P<version>.+))\n(?:Chain ID: (?P<chainId>\d+))\n(?:Nonce: (?P<nonce>[a-zA-Z0-9]+))\n(?:Issued At: (?P<issuedAt>.+))(?:\nExpiration Time: (?P<expirationTime>.+))?(?:\nNot Before: (?P<notBefore>.+))?(?:\nRequest ID: (?P<requestId>.+))?/m";
+
+        preg_match($re, $message, $params);
+        $params["chainId"] = (int)$params["chainId"];
+        $params = array_filter($params);
+
+        if (array_key_exists("expirationTime", $params)) {
+            $params["expirationTime"] = self::formatISOToTimestamp($params["expirationTime"]);
+        }
+
+        if (array_key_exists("issuedAt", $params)) {
+            $params["issuedAt"] = self::formatISOToTimestamp($params["issuedAt"]);
+        }
+
+        if (array_key_exists("notBefore", $params)) {
+            $params["notBefore"] = self::formatISOToTimestamp($params["notBefore"]);
+        }
+
+        $resources = explode("Resources:\n", $message);
+
+        if (isset($resources[1])) {
+            $params["resources"] = array_map(function ($r) {
+                return substr($r, 2);
+            }, explode("\n", $resources[1]));
+        }
+
+        return SiweMessageParams::fromArray($params);
+    }
+
+    private static function formatTimestampToISO(int $timestamp): string
     {
         $date = new DateTime();
         $date->setTimestamp($timestamp);
         return $date->format('Y-m-d\TH:i:s.v\Z');
+    }
+
+    private static function formatISOToTimestamp(string $iso): int
+    {
+        return strtotime($iso);
     }
 
 }
