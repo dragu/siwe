@@ -6,13 +6,12 @@ use Zbkm\Siwe\SiweMessage;
 use PHPUnit\Framework\TestCase;
 use Zbkm\Siwe\SiweMessageParamsBuilder;
 
-class SiweMessageTest extends TestCase
+class SiweMessageCreateTest extends TestCase
 {
     protected SiweMessageParamsBuilder $messageBuilder;
 
-    function __construct(string $name = null)
+    function setUp(): void
     {
-        parent::__construct($name);
         $this->messageBuilder = SiweMessageParamsBuilder::create()
             ->withAddress('0xA0Cf798816D4b9b9866b5330EEa46a18382f251e')
             ->withChainId(1)
