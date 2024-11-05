@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Zbkm\Siwe;
 
-use DateTime;
+use Zbkm\Siwe\Utils\TimeFormatter;
 
 class SiweMessage
 {
@@ -25,14 +25,14 @@ class SiweMessage
         $message .= "Version: " . $params->version . "\n";
         $message .= "Chain ID: " . $params->chainId . "\n";
         $message .= "Nonce: " . $params->nonce . "\n";
-        $message .= "Issued At: " . self::formatTimestampToISO($params->issuedAt);
+        $message .= "Issued At: " . TimeFormatter::timestampToISO($params->issuedAt);
 
         if ($params->expirationTime) {
-            $message .= "\nExpiration Time: " . self::formatTimestampToISO($params->expirationTime);
+            $message .= "\nExpiration Time: " . TimeFormatter::timestampToISO($params->expirationTime);
         }
 
         if ($params->notBefore) {
-            $message .= "\nNot Before: " . self::formatTimestampToISO($params->notBefore);
+            $message .= "\nNot Before: " . TimeFormatter::timestampToISO($params->notBefore);
         }
 
         if ($params->requestId) {
@@ -59,15 +59,15 @@ class SiweMessage
         $params = array_filter($params);
 
         if (array_key_exists("expirationTime", $params)) {
-            $params["expirationTime"] = self::formatISOToTimestamp($params["expirationTime"]);
+            $params["expirationTime"] = TimeFormatter::ISOToTimestamp($params["expirationTime"]);
         }
 
         if (array_key_exists("issuedAt", $params)) {
-            $params["issuedAt"] = self::formatISOToTimestamp($params["issuedAt"]);
+            $params["issuedAt"] = TimeFormatter::ISOToTimestamp($params["issuedAt"]);
         }
 
         if (array_key_exists("notBefore", $params)) {
-            $params["notBefore"] = self::formatISOToTimestamp($params["notBefore"]);
+            $params["notBefore"] = TimeFormatter::ISOToTimestamp($params["notBefore"]);
         }
 
         $resources = explode("Resources:\n", $message);
@@ -80,17 +80,4 @@ class SiweMessage
 
         return SiweMessageParams::fromArray($params);
     }
-
-    private static function formatTimestampToISO(int $timestamp): string
-    {
-        $date = new DateTime();
-        $date->setTimestamp($timestamp);
-        return $date->format('Y-m-d\TH:i:s.v\Z');
-    }
-
-    private static function formatISOToTimestamp(string $iso): int
-    {
-        return strtotime($iso);
-    }
-
 }
