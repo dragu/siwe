@@ -28,6 +28,25 @@ class SiweMessageParams
         $this->validate();
     }
 
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            address: $data["address"],
+            chainId: $data["chainId"],
+            domain: $data["domain"],
+            statement: $data["statement"] ?? null,
+            expirationTime: $data["expirationTime"] ?? null,
+            issuedAt: $data["issuedAt"] ?? null,
+            notBefore: $data["notBefore"] ?? null,
+            requestId: $data["requestId"] ?? null,
+            scheme: $data["scheme"] ?? null,
+            nonce: $data["nonce"] ?? null,
+            uri: $data["uri"] ?? null,
+            version: $data["version"] ?? null,
+            resources: $data["resources"] ?? null
+        );
+    }
+
     private function validate(): void
     {
         SiweMessageFieldValidator::validateOrFail($this);
