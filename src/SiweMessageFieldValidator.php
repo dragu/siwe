@@ -93,6 +93,8 @@ class SiweMessageFieldValidator
 
     public static function domainValidate(string $domain): bool
     {
+        // parse url to handle port
+        $domain = parse_url("http://$domain", PHP_URL_HOST);
         return (bool)filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
     }
 
