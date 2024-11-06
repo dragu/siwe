@@ -171,27 +171,22 @@ class SiweMessageParamsBuilder
      */
     public function build(): SiweMessageParams
     {
-        if (!isset($this->address)) {
-            throw new SiweInvalidMessageFieldException("address", "", ["Required fields are not set"]);
-        }
+        $requiredFields = ['address', 'chainId', 'domain', 'uri'];
 
-        if (!isset($this->chainId)) {
-            throw new SiweInvalidMessageFieldException("chainId", "", ["Required fields are not set"]);
+        foreach ($requiredFields as $field) {
+            if (!isset($this->$field)) {
+                throw new SiweInvalidMessageFieldException($field, "", ["Required fields are not set"]);
+            }
         }
-
-        if (!isset($this->domain)) {
-            throw new SiweInvalidMessageFieldException("domain", "", ["Required fields are not set"]);
-        }
-
 
         return new SiweMessageParams(
             address: $this->address,
             chainId: $this->chainId,
             domain: $this->domain,
+            uri: $this->uri,
             issuedAt: $this->issuedAt,
             nonce: $this->nonce,
             statement: $this->statement,
-            uri: $this->uri,
             version: $this->version,
             scheme: $this->scheme,
             expirationTime: $this->expirationTime,

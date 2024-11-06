@@ -44,21 +44,21 @@ class SiweMessageFieldValidator
             ]);
         }
 
-        if ($params->nonce && !self::nonceValidate($params->nonce)) {
+        if (!self::nonceValidate($params->nonce)) {
             throw new SiweInvalidMessageFieldException("nonce", $params->nonce, [
                 "Nonce must be at least 8 characters.",
                 "Nonce must be alphanumeric."
             ]);
         }
 
-        if ($params->uri && !self::uriValidate($params->uri)) {
+        if (!self::uriValidate($params->uri)) {
             throw new SiweInvalidMessageFieldException("uri", $params->uri, [
                 "URI must be a RFC 3986 URI referring to the resource that is the subject of the signing.",
                 "See https://www.rfc-editor.org/rfc/rfc3986"
             ]);
         }
 
-        if ($params->version && !self::versionValidate($params->version)) {
+        if (!self::versionValidate($params->version)) {
             throw new SiweInvalidMessageFieldException("version", $params->version, [
                 "Version must be '1'."
             ]);
