@@ -1,6 +1,6 @@
 {
   "name": "zbkm/siwe",
-  "description": "A PHP implementation of EIP-4361 Sign In With Ethereum verification",
+  "description": "Ethereum Authentication for PHP",
   "type": "library",
   "license": "MIT",
   "scripts": {
@@ -21,7 +21,8 @@
     "phpunit/phpunit": "11"
   },
   "require": {
-    "greensea/keccak": "^1.0",
-    "ext-ctype": "*"
+    "kornrunner/keccak": "^1.0",
+    "ext-ctype": "*",
+    "simplito/elliptic-php": "^1.0"
   }
 }
