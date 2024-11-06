@@ -1,3 +1,41 @@
-# Sign-In with Ethereum
-
+# SIWE (Sign-In with Ethereum) PHP
 This package provides a PHP implementation of EIP-4361: Sign In With Ethereum.
+[EIP-4361 Specification](https://eips.ethereum.org/EIPS/eip-4361).
+
+## Installation
+```shell
+composer require zbkm/siwe
+```
+## Example
+1. The wallet is connected to the client, then the wallet address is sent to the server 
+2. On the server we generate SIWE messages.
+```php
+$params = SiweMessageParams::fromArray([
+            "address" => "0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
+            "chainId" => 1,
+            "domain" => "example.com",
+            "uri" => "https://example.com/path"
+        ]);
+```
+or with params builder:
+```php
+$params = SiweMessageParamsBuilder::create()
+            ->withAddress($address)
+            ->withChainId(1)
+            ->withDomain('example.com')
+            ->withUri('https://example.com/path')->build();
+```
+And we generate the message text:
+```php
+$message = SiweMessage::create($params);
+```
+3. On the client side, we sign the SIWE message via personal_sign. We send the received signature to the server.
+4. All that remains is to check the signature.
+```php
+if (SiweMessage::verify($params, $signature)) {
+    // authorization success
+} else {
+    //authorization failed (signature invalid)
+}
+```
+
