@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace Zbkm\Siwe;
 
+use Zbkm\Siwe\Ethereum\Signature;
 use Zbkm\Siwe\Utils\TimeFormatter;
 
 class SiweMessage
 {
     /**
+     * Create SIWE message.
+     *
      * @param SiweMessageParams $params
      * @return string
      */
@@ -49,6 +52,12 @@ class SiweMessage
         return $message;
     }
 
+    /**
+     * Parse SIWE message to params format
+     *
+     * @param string $message
+     * @return SiweMessageParams
+     */
     public static function parse(string $message): SiweMessageParams
     {
         // regex from https://github.com/wevm/viem/blob/main/src/utils/siwe/parseSiweMessage.ts
@@ -79,5 +88,32 @@ class SiweMessage
         }
 
         return SiweMessageParams::fromArray($params);
+    }
+
+    /**
+     * Verify signature for SIWE in params format
+     *
+     * @param SiweMessageParams $params
+     * @param string            $signature
+     * @return bool
+     * @throws \Exception
+     */
+    public static function verify(SiweMessageParams $params, string $signature): bool
+    {
+        return Signature::verifyMessage(self::create($params), $signature, $params->address);
+    }
+
+    /**
+     * Verify signature for SIWE message
+     *
+     * @param string $message
+     * @param string $signature
+     * @return bool
+     * @throws \Exception
+     */
+    public static function verifyMessage(string $message, string $signature): bool
+    {
+        $params = self::parse($message);
+        return Signature::verifyMessage($message, $signature, $params->address);
     }
 }
