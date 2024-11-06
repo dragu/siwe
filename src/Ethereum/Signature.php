@@ -32,7 +32,6 @@ class Signature
         $message = self::MESSAGE_PREFIX . "{$msglen}{$message}";
 
         $signer = self::ecrecover($message, $signature);
-
         return strtolower($address) == $signer;
     }
 
@@ -58,10 +57,11 @@ class Signature
             throw new SignatureException("v can only be 27 or 28");
         }
 
-        $ec = new EC('secp256k1');
-        $pubkey = $ec->recoverPubKey($hash, $sign, $v)->encode("hex");
-
-        return self::pubKeyToAddress($pubkey);
+        return self::pubKeyToAddress(
+            (new EC('secp256k1'))
+                ->recoverPubKey($hash, $sign, $v)
+                ->encode("hex")
+        );
     }
 
     /**
