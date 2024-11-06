@@ -1,15 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace Zbkm\Siwe;
+namespace Zbkm\Siwe\Validators;
 
 use Zbkm\Siwe\Ethereum\Address;
 use Zbkm\Siwe\Exception\SiweInvalidMessageFieldException;
+use Zbkm\Siwe\SiweMessageParams;
 
 class SiweMessageFieldValidator
 {
+    /**
+     * Minimum length considering eip-4361
+     */
     const MIN_NONCE_LENGTH = 8;
 
+    /**
+     * Validate SiweMessageParams or except if there is an error in params
+     *
+     * @param SiweMessageParams $params
+     * @return bool
+     */
     public static function validateOrFail(SiweMessageParams $params): bool
     {
         if (!self::addressValidate($params->address)) {
@@ -81,16 +91,34 @@ class SiweMessageFieldValidator
         return true;
     }
 
+    /**
+     * Validate Ethereum wallet address (taking into account the checksum)
+     *
+     * @param string $address
+     * @return bool
+     */
     public static function addressValidate(string $address): bool
     {
         return Address::isAddress($address);
     }
 
+    /**
+     * Validate chain ID
+     *
+     * @param int $chainId
+     * @return bool
+     */
     public static function chainIdValidate(int $chainId): bool
     {
         return $chainId > 0 and gettype($chainId) === "integer";
     }
 
+    /**
+     * Validate domain name
+     *
+     * @param string $domain
+     * @return bool
+     */
     public static function domainValidate(string $domain): bool
     {
         // parse url to handle port
@@ -98,31 +126,67 @@ class SiweMessageFieldValidator
         return (bool)filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
     }
 
-    public static function nonceValidate(string $field): bool
+    /**
+     * Validate nonce string
+     *
+     * @param string $nonce
+     * @return bool
+     */
+    public static function nonceValidate(string $nonce): bool
     {
-        return strlen($field) > self::MIN_NONCE_LENGTH and ctype_alnum($field);
+        return strlen($nonce) > self::MIN_NONCE_LENGTH and ctype_alnum($nonce);
     }
 
+    /**
+     * Validate URI
+     *
+     * @param string $uri
+     * @return bool
+     */
     public static function uriValidate(string $uri): bool
     {
         return (bool)filter_var($uri, FILTER_VALIDATE_URL);
     }
 
+    /**
+     * Validate version
+     *
+     * @param string $version
+     * @return bool
+     */
     public static function versionValidate(string $version): bool
     {
         return $version == "1";
     }
 
+    /**
+     * Validate scheme
+     *
+     * @param string $scheme
+     * @return bool
+     */
     public static function schemeValidate(string $scheme): bool
     {
         return preg_match('/^[a-z][a-z0-9+.-]*$/', strtolower($scheme)) === 1;
     }
 
+    /**
+     * Validate statement
+     *
+     * @param string $statement
+     * @return bool
+     */
     public static function statementValidate(string $statement): bool
     {
         return !str_contains($statement, "\n");
     }
 
+    /**
+     * Validate resource
+     *
+     * @param string $resource
+     * @return bool
+     */
     public static function resourceValidate(string $resource): bool
     {
         return self::uriValidate($resource);

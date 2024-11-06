@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Zbkm\Siwe;
 
+use Zbkm\Siwe\Validators\SiweMessageFieldValidator;
+
 class SiweMessageParams
 {
     /**
