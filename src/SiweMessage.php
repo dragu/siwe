@@ -5,6 +5,7 @@ namespace Zbkm\Siwe;
 
 use Zbkm\Siwe\Ethereum\Signature;
 use Zbkm\Siwe\Utils\TimeFormatter;
+use Zbkm\Siwe\Validators\SiweMessageTimeValidator;
 
 class SiweMessage
 {
@@ -100,7 +101,8 @@ class SiweMessage
      */
     public static function verify(SiweMessageParams $params, string $signature): bool
     {
-        return Signature::verifyMessage(self::create($params), $signature, $params->address);
+        return SiweMessageTimeValidator::validate($params) &&
+            Signature::verifyMessage(self::create($params), $signature, $params->address);
     }
 
     /**
@@ -114,6 +116,7 @@ class SiweMessage
     public static function verifyMessage(string $message, string $signature): bool
     {
         $params = self::parse($message);
-        return Signature::verifyMessage($message, $signature, $params->address);
+        return SiweMessageTimeValidator::validate($params) &&
+            Signature::verifyMessage($message, $signature, $params->address);
     }
 }

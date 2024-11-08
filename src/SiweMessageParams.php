@@ -7,6 +7,8 @@ use Zbkm\Siwe\Validators\SiweMessageFieldValidator;
 
 class SiweMessageParams
 {
+    const DEFAULT_VERSION = "1";
+
     /**
      * @param string        $address        The Ethereum address performing the signing
      * @param int           $chainId        Chain ID (1 for Ethereum)
@@ -45,6 +47,10 @@ class SiweMessageParams
 
         if ($this->nonce === null) {
             $this->nonce = NonceManager::generate();
+        }
+
+        if ($this->version === null) {
+            $this->version = self::DEFAULT_VERSION;
         }
 
         $this->validate();
@@ -90,7 +96,7 @@ class SiweMessageParams
     }
 
     /**
-     * Validate params. Runs once when an object is created.
+     * Validate params
      *
      * @return void
      */
