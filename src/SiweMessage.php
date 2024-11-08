@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Zbkm\Siwe;
 
 use Zbkm\Siwe\Ethereum\Signature;
+use Zbkm\Siwe\Exception\SignatureException;
+use Zbkm\Siwe\Exception\SiweInvalidMessageFieldException;
+use Zbkm\Siwe\Exception\SiweTimeException;
 use Zbkm\Siwe\Utils\TimeFormatter;
 use Zbkm\Siwe\Validators\SiweMessageTimeValidator;
 
@@ -97,12 +100,15 @@ class SiweMessage
      * @param SiweMessageParams $params
      * @param string            $signature
      * @return bool
-     * @throws \Exception
      */
     public static function verify(SiweMessageParams $params, string $signature): bool
     {
-        return SiweMessageTimeValidator::validate($params) &&
-            Signature::verifyMessage(self::create($params), $signature, $params->address);
+        try {
+            self::verifyOrFail($params, self::create($params), $signature);
+            return true;
+        } catch (\Exception) {
+            return false;
+        }
     }
 
     /**
@@ -111,12 +117,33 @@ class SiweMessage
      * @param string $message
      * @param string $signature
      * @return bool
-     * @throws \Exception
      */
     public static function verifyMessage(string $message, string $signature): bool
     {
-        $params = self::parse($message);
-        return SiweMessageTimeValidator::validate($params) &&
-            Signature::verifyMessage($message, $signature, $params->address);
+        try {
+            self::verifyOrFail(self::parse($message), $message, $signature);
+            return true;
+        } catch (\Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * Verify signature or except
+     *
+     * @param SiweMessageParams $params
+     * @param string            $message
+     * @param string            $signature
+     * @return bool
+     * @throws SignatureException|SiweTimeException
+     */
+    public static function verifyOrFail(SiweMessageParams $params, string $message, string $signature): bool
+    {
+        SiweMessageTimeValidator::validateOrFail($params);
+        if (Signature::verifyMessage($message, $signature, $params->address)) {
+            return true;
+        }
+
+        throw new SignatureException("Signature invalid");
     }
 }

@@ -24,7 +24,7 @@ class Signature
      * @param $signature string Signature
      * @param $address   string Signer address
      * @return bool
-     * @throws SignatureException|\Exception
+     * @throws SignatureException
      */
     public static function verifyMessage(string $message, string $signature, string $address): bool
     {
@@ -41,7 +41,7 @@ class Signature
      * @param string $message   Message
      * @param string $signature Signature
      * @return string
-     * @throws SignatureException|\Exception
+     * @throws SignatureException
      */
     public static function ecrecover(string $message, string $signature): string
     {
