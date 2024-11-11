@@ -9,12 +9,12 @@ composer require zbkm/siwe
 1. The wallet is connected to the client, then the wallet address is sent to the server 
 2. On the server we generate SIWE messages.
 ```php
-$params = SiweMessageParams::fromArray([
-            "address" => $address,
-            "chainId" => 1,
-            "domain" => "example.com",
-            "uri" => "https://example.com/path"
-        ]);
+$params = new SiweMessageParams(
+    address: $address,
+    chainId: 1,
+    domain: "example.com",
+    uri: "https://example.com/path"
+);
 ```
 or with params builder:
 ```php
@@ -37,8 +37,8 @@ if (SiweMessage::verify($params, $signature)) {
     // authorization failed (signature invalid)
 }
 ```
-You can also look at a fully working [example](example/) of authorization using the library.
+You can also look at a fully working [example](example) of authorization using the library.
 
 ## Links
 - [EIP-4361 Specification](https://eips.ethereum.org/EIPS/eip-4361).
-- [Example of use](example/)
+- [Example of use](example)
