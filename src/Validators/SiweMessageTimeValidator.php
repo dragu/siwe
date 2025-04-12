@@ -27,25 +27,13 @@ class SiweMessageTimeValidator
         return true;
     }
 
-    /**
-     * Validate notBefore time
-     *
-     * @param int $notBefore
-     * @return bool
-     */
-    public static function notBeforeValidate(int $notBefore): bool
+    public static function notBeforeValidate(string $expirationTime): bool
     {
-        return time() > $notBefore;
+        return new \DateTime() > new \DateTime($expirationTime);
     }
 
-    /**
-     * Validate expiration time
-     *
-     * @param int $expirationTime
-     * @return bool
-     */
-    public static function expirationTimeValidate(int $expirationTime): bool
+    public static function expirationTimeValidate(string $expirationTime): bool
     {
-        return $expirationTime > time();
+        return new \DateTime($expirationTime) > new \DateTime();
     }
 }

@@ -32,14 +32,14 @@ class SiweMessage
         $message .= "Version: " . $params->version . "\n";
         $message .= "Chain ID: " . $params->chainId . "\n";
         $message .= "Nonce: " . $params->nonce . "\n";
-        $message .= "Issued At: " . TimeFormatter::timestampToISO($params->issuedAt);
+        $message .= "Issued At: " . $params->issuedAt;
 
         if ($params->expirationTime) {
-            $message .= "\nExpiration Time: " . TimeFormatter::timestampToISO($params->expirationTime);
+            $message .= "\nExpiration Time: " . $params->expirationTime;
         }
 
         if ($params->notBefore) {
-            $message .= "\nNot Before: " . TimeFormatter::timestampToISO($params->notBefore);
+            $message .= "\nNot Before: " . $params->notBefore;
         }
 
         if ($params->requestId) {

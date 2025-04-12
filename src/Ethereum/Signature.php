@@ -47,14 +47,16 @@ class Signature
     {
         $hash = Keccak::hash($message, 256);
 
+        $offset = (substr($signature, 0, 2) === "0x") ? 2 : 0;
+
         $sign = [
-            "r" => substr($signature, 2, 64),
-            "s" => substr($signature, 66, 64)
+            "r" => substr($signature, $offset, 64),
+            "s" => substr($signature, $offset + 64, 64)
         ];
-        $v = hexdec(substr($signature, 130, 2)) - 27;
+        $v = hexdec(substr($signature, $offset + 128, 2)) - 27;
 
         if ($v != ($v & 1)) {
-            throw new SignatureException("v can only be 27 or 28");
+            throw new SignatureException("v can only be 27 or 28, not {$v}");
         }
 
         return self::pubKeyToAddress(
@@ -63,6 +65,7 @@ class Signature
                 ->encode("hex")
         );
     }
+
 
     /**
      * Format hex pubkey to Ethereum address
